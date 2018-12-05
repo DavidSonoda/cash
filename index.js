@@ -21,9 +21,9 @@ module.exports = function (options) {
   if (typeof threshold === 'string') threshold = bytes(threshold)
   const get = options.get
   const set = options.set
-  const exclude = {
-    effective: !((options.exclude || []) === []),
-    paths: new Set(options.exclude || [])
+  const excluded = {
+    effective: !((options.excluded || []) === []),
+    paths: new Set(options.excluded || [])
   };
 
   const allowed = {
@@ -41,7 +41,7 @@ module.exports = function (options) {
     // uncacheable request method
     if (!methods[ctx.request.method]) return false;
 
-    if (exclude.paths.has(ctx.request.path)) return false;
+    if (excluded.paths.has(ctx.request.path)) return false;
 
     if (allowed.effective && !allowed.paths.has(ctx.request.path)) return false;
 
