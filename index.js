@@ -1,9 +1,9 @@
 'use strict'
 
-const compressible = require('compressible')
-const toArray = require('stream-to-array')
-const isJSON = require('koa-is-json')
-const bytes = require('bytes')
+const compressible = require('compressible');
+const toArray = require('stream-to-array');
+const isJSON = require('koa-is-json');
+const bytes = require('bytes');
 
 const compress = require('util.promisify')(require('zlib').gzip)
 
@@ -24,7 +24,14 @@ module.exports = function (options) {
   const exclude = {
     effective: !((options.exclude || []) === []),
     paths: new Set(options.exclude || [])
-  }
+  };
+
+  const allowed = {
+    effective: !((options.allowed || []) === []),
+    paths: new Set(options.allowed || [])
+  };
+
+  console.log(allowed);
 
   if (!get) throw new Error('.get not defined')
   if (!set) throw new Error('.set not defined')
@@ -32,9 +39,11 @@ module.exports = function (options) {
   // ctx.cashed(maxAge) => boolean
   const cashed = async function cashed (ctx, maxAge) {
     // uncacheable request method
-    if (!methods[ctx.request.method]) return false
+    if (!methods[ctx.request.method]) return false;
 
-    if (exclude.paths.has(ctx.request.path)) return false
+    if (exclude.paths.has(ctx.request.path)) return false;
+
+    if (allowed.effective && !allowed.paths.has(ctx.request.path)) return false;
 
     const key = ctx.cashKey = hash(ctx)
     const obj = await get(key, maxAge || options.maxAge || 0)
