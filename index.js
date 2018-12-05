@@ -21,6 +21,11 @@ module.exports = function (options) {
   if (typeof threshold === 'string') threshold = bytes(threshold)
   const get = options.get
   const set = options.set
+  const exclude = {
+    effective: !((options.exclude || []) === []),
+    paths: new Set(options.exclude || [])
+  }
+
   if (!get) throw new Error('.get not defined')
   if (!set) throw new Error('.set not defined')
 
@@ -28,6 +33,8 @@ module.exports = function (options) {
   const cashed = async function cashed (ctx, maxAge) {
     // uncacheable request method
     if (!methods[ctx.request.method]) return false
+
+    if (exclude.paths.has(ctx.request.path)) return false
 
     const key = ctx.cashKey = hash(ctx)
     const obj = await get(key, maxAge || options.maxAge || 0)
