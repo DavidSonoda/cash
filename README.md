@@ -92,7 +92,10 @@ app.use(require('koacash')){
   },
   set: async (key, value, maxAge) => {
     // Your own set() implementation
-  }
+  },
+  allowed: [
+    '/foo', '/bar'
+  ]
 }
 ```
 
