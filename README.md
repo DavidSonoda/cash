@@ -1,4 +1,4 @@
-# Koa Cash
+# Koa Cash [Unofficial]
 
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
@@ -7,12 +7,13 @@
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
 
-HTTP response caching for Koa.
+HTTP response caching for Koa. Modified from official `koa-cash`, allowing excluding and whitelisted paths.
 Caches the response based on any arbitrary store you'd like.
 
 - Handles JSON and stream bodies
 - Handles gzip compression negotiation
 - Handles 304 responses
+- Handles whitelisted and blacklisted paths.
 
 ```js
 app.use(require('koa-cash')({
@@ -79,6 +80,27 @@ async function set(key, value, maxAge) {
   ...
 }
 ```
+
+#### `options.allowed`
+
+Set a list of whitelisted paths, in which caching will be turned on.
+
+```js
+app.use(require('koacash')){
+  get: async (key, maxAge) => {
+    // Your own get() implementation
+  },
+  set: async (key, value, maxAge) => {
+    // Your own set() implementation
+  }
+}
+```
+
+#### `options.excluded`
+
+Similar to `options.allowed`, but when both params are supplied, but for any routes that are both in excluded list and allowed list, **excluded list prevails**.
+
+#### `options.`
 
 Note: `maxAge` is set by `.cash={ maxAge }`.
 If it's not set, then `maxAge` will be `0`, which you should then ignore.
